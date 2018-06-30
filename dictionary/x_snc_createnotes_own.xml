@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Own" max_length="40" name="x_snc_createnotes_own" type="collection">
+        <element label="Email" max_length="40" name="email" type="string"/>
+        <element label="NoteID" max_length="40" name="noteid" type="string"/>
+    </element>
+</database>

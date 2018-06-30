@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record_update>
-    <sys_dictionary action="INSERT_OR_UPDATE" element="title" table="x_snc_createnotes_note">
+    <sys_dictionary action="INSERT_OR_UPDATE" element="" table="x_snc_createnotes_own">
         <active>true</active>
         <array>false</array>
         <array_denormalized>false</array_denormalized>
@@ -15,10 +15,10 @@
         <choice/>
         <choice_field/>
         <choice_table/>
-        <column_label>Title</column_label>
+        <column_label/>
         <comments/>
         <create_roles/>
-        <default_value>New Note</default_value>
+        <default_value/>
         <defaultsort/>
         <delete_roles/>
         <dependent/>
@@ -28,15 +28,15 @@
         <dynamic_creation_script/>
         <dynamic_default_value/>
         <dynamic_ref_qual/>
-        <element>title</element>
+        <element/>
         <element_reference>false</element_reference>
         <foreign_database/>
         <function_definition/>
         <function_field>false</function_field>
-        <internal_type display_value="String">string</internal_type>
+        <internal_type display_value="Collection">collection</internal_type>
         <mandatory>false</mandatory>
-        <max_length>100</max_length>
-        <name>x_snc_createnotes_note</name>
+        <max_length>40</max_length>
+        <name>x_snc_createnotes_own</name>
         <next_element/>
         <primary>false</primary>
         <read_only>false</read_only>
@@ -53,16 +53,16 @@
         <staged>false</staged>
         <sys_class_name>sys_dictionary</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2017-04-10 15:48:46</sys_created_on>
-        <sys_id>41f9eeb04fc3130066084a10a310c793</sys_id>
+        <sys_created_on>2018-06-30 19:37:54</sys_created_on>
+        <sys_id>c405df494f43130066084a10a310c72f</sys_id>
         <sys_mod_count>0</sys_mod_count>
-        <sys_name>Title</sys_name>
+        <sys_name>x_snc_createnotes_own</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
-        <sys_update_name>sys_dictionary_x_snc_createnotes_note_title</sys_update_name>
-        <sys_updated_by>system</sys_updated_by>
-        <sys_updated_on>2018-06-29 21:51:21</sys_updated_on>
+        <sys_update_name>sys_dictionary_x_snc_createnotes_own_null</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-06-30 19:37:54</sys_updated_on>
         <table_reference>false</table_reference>
         <text_index>false</text_index>
         <unique>false</unique>

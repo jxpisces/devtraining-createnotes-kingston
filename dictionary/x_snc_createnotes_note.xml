@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
     <element label="Note" max_length="40" name="x_snc_createnotes_note" type="collection">
+        <element label="Due" max_length="40" name="due" type="glide_date_time"/>
         <element default="Enter notes here" label="Note" max_length="4000" name="note" type="string"/>
         <element default="javascript:getNextObjNumberPadded();" display="true" dynamic_default_value="fdcb83a85f220100a9ad2572f2b4773c" label="Number" max_length="40" name="number" type="string" use_dynamic_default="true"/>
+        <element choice="1" label="Priority" max_length="40" name="priority" type="choice">
+            <choice>
+                <element label="Choice 1" sequence="0" value="1-Critical"/>
+                <element label="Choice 2" sequence="1" value="2-High"/>
+                <element label="Choice 3" sequence="2" value="3-Moderate"/>
+                <element label="-TBDVALUE-4-Low" sequence="3"/>
+            </choice>
+        </element>
+        <element attributes="edge_encryption_enabled=true" choice="1" label="Status" max_length="40" name="status" type="string">
+            <choice>
+                <element label="Choice 1" sequence="0" value="Completed"/>
+                <element label="Choice 2" sequence="1" value="Uncomplted"/>
+                <element label="Choice 3" sequence="2" value="Choice 3"/>
+            </choice>
+        </element>
         <element default="New Note" label="Title" max_length="100" name="title" type="string"/>
         <element default="javascript:gs.getUserID();" dynamic_default_value="2fd8e97bef3221002841f7f775c0fbc1" label="User" max_length="32" name="user" reference="sys_user" type="reference" use_dynamic_default="true"/>
         <index name="index">

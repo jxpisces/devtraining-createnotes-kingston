@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($scope,$rootScope) {
+	/* widget controller */
+	var c = this;
+
+	//$rootScope.loginFlag = true;
+	$scope.loginOkay = true;
+	c.login = function() {
+		//var id = c.data.notes[idx].sys_id;
+		//console.log('Note email: ' + c.data.userEmail);
+		//console.log('Note pwd: ' + c.data.userPwd);
+
+		var logInData = {email : c.data.userEmail, pwd : c.data.userPwd, loginFlag : $scope.loginOkay};
+
+		$rootScope.$emit('loginNote', logInData);
+
+		//$scope.loginOkay = $rootScope.loginFlag;
+	}
+
+	$rootScope.$on('acLogin', function(event,data) { 
+		//console.log("after log in ac received: \n");
+
+		$scope.loginOkay = data;
+		//console.log($scope.loginOkay);
+	});
+
+	$rootScope.$on('logoutNote', function(event,data) { 
+		/*console.log("after log out: \n");
+		console.log(event);
+		console.log(data);
+		*/
+		c.data.userEmail = '';
+		c.data.userPwd = '';
+		$scope.loginOkay = data;
+	});
+
+
+
+
+
+
+
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>notes_login</id>
+        <internal>false</internal>
+        <link/>
+        <name>Notes Login</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-06-29 21:53:59</sys_created_on>
+        <sys_id>ff8a2e744fc3130066084a10a310c7ef</sys_id>
+        <sys_mod_count>31</sys_mod_count>
+        <sys_name>Notes Login</sys_name>
+        <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
+        <sys_update_name>sp_widget_ff8a2e744fc3130066084a10a310c7ef</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-06-30 21:43:43</sys_updated_on>
+        <template><![CDATA[<div class="login" ng-show="loginOkay">
+<!-- your widget template -->
+  <form>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" ng-model="c.data.userEmail">
+    </div>
+    
+    <div class="form-group">
+      <label for="pwd">Password:</label>
+      <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd" ng-model="c.data.userPwd">
+    </div>
+    
+    
+    <button type="button" class="btn btn-primary" ng-click="c.login()">Login</button>
+  	<hr/>
+    
+  </form>
+  
+</div>]]></template>
+    </sp_widget>
+</record_update>
