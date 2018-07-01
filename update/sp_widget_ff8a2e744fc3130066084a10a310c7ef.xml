@@ -22,9 +22,21 @@
 		var logInData = {email : c.data.userEmail, pwd : c.data.userPwd};
 		
 		$rootScope.$emit('loginNote', logInData);
-
+		
+		
 		//$scope.loginOkay = $rootScope.loginFlag;
 	}
+	
+	$rootScope.$on('acLogin', function(event,data) { 
+		//console.log("after log in ac received: \n");
+		if (data) {
+			$scope.loginOkay = false;
+		} else {
+			spUtil.addErrorMessage("The input email or password are not correct!!!");
+		}
+		//$scope.loginOkay = data;
+		//console.log($scope.loginOkay);
+	});
 	
 	c.register = function() {
 		$scope.loginOkay = false;
@@ -49,7 +61,6 @@
 				if (!r.data.isExistent) {
 					spUtil.addInfoMessage("Registration succeeds!!!");
 					c.cancel();
-	
 				} else {
 					$scope.duplicatedEmail = true;
 				}
@@ -61,19 +72,12 @@
 	c.cancel = function() {
 		$scope.loginOkay = true;
 		$scope.registerOkay = false;
+		c.data.userEmail = '';
+		c.data.userPwd = '';
 	}
 	
 
-	$rootScope.$on('acLogin', function(event,data) { 
-		//console.log("after log in ac received: \n");
-		if (data) {
-			$scope.loginOkay = false;
-		} else {
-			spUtil.addErrorMessage("The input email or password are not correct!!!");
-		}
-		//$scope.loginOkay = data;
-		//console.log($scope.loginOkay);
-	});
+	
 
 	$rootScope.$on('logoutNote', function(event,data) { 
 		/*console.log("after log out: \n");
@@ -127,6 +131,7 @@
 					newUser.initialize();
 					newUser.email = input.regEmail;
 					newUser.password = input.regPwd;
+					
 					newUser.insert();
 
 					console.log("new user email is:");
@@ -150,14 +155,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-06-29 21:53:59</sys_created_on>
         <sys_id>ff8a2e744fc3130066084a10a310c7ef</sys_id>
-        <sys_mod_count>74</sys_mod_count>
+        <sys_mod_count>78</sys_mod_count>
         <sys_name>Notes Login</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_ff8a2e744fc3130066084a10a310c7ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-01 00:02:33</sys_updated_on>
+        <sys_updated_on>2018-07-01 21:46:54</sys_updated_on>
         <template><![CDATA[<div class="login" ng-show="loginOkay">
 <!-- your widget template -->
   <form>

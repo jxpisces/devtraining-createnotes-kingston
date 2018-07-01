@@ -2,7 +2,6 @@
 <database>
     <element label="LoginUser" max_length="40" name="x_snc_createnotes_loginuser" type="collection">
         <element label="Email" max_length="40" name="email" type="string"/>
-        <element label="Last Login" max_length="40" name="last_login" type="glide_date_time"/>
         <element label="Password" max_length="40" name="password" type="string"/>
     </element>
 </database>

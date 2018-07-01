@@ -7,7 +7,7 @@
 	var c = this;
 	
 	//$rootScope.loginFlag = true;
-	$scope.loginOkay = false;
+	$scope.loginOkay = true;
 	
 	// Listen to event from the "NoteLogin" widget.
 	//$rootScope.$emit('loginNote', $scope.userEmail, $scope.userPwd);
@@ -145,6 +145,10 @@
         <css>h3.panel-title {
   font-size:20px;
   padding-top:5px;
+}
+.delete{
+	float: right;
+  color: red;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -214,6 +218,19 @@
 				console.log('\n');
 				*/
 			data.idCorrect = curPwd == input.logPwd;
+			/*if (data.idCorrect) {
+				//Populates "Last Login" field for the current user.
+				var gdt = new GlideDateTime();
+				//console.log("the last login is: \n");
+				//console.log(gdt.getTime());
+				//console.log(gdt.getLocalTime());
+				
+				//console.log(gdt.getDate());
+				//console.log(gdt.getLocalDate());
+				//checkID.last_login = gdt.getLocalTime();
+				//checkID.update();
+			}
+			*/
 			//console.log("at db, idCorrect");
 			//console.log(data.idCorrect);
 			/*if (curPwd == input.logPwd) {
@@ -234,19 +251,19 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-10-14 01:08:53</sys_created_on>
         <sys_id>296321a54f7d4f004e584b8d0210c7a9</sys_id>
-        <sys_mod_count>82</sys_mod_count>
+        <sys_mod_count>136</sys_mod_count>
         <sys_name>Notes List</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_296321a54f7d4f004e584b8d0210c7a9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-06-30 22:35:59</sys_updated_on>
+        <sys_updated_on>2018-07-01 23:41:00</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default" ng-show="loginOkay">
-  
+
   <button type="button" class="btn btn-primary" ng-click="c.logout()" >Logout</button>
-  	
-  
+
+
   <div class="panel-heading clearfix">
     <h3 class="panel-title pull-left">
       {{::c.options.title}}
@@ -255,20 +272,48 @@
       <span class="glyphicon glyphicon-plus"></span> 
     </button>
   </div>
+
   <div class="panel-body"> 
     <input placeholder="Filter" class="form-control" ng-model="noteFilter" /> 
   </div>
 
+  
+  
+  
+  
   <div class="list-group">
     <a class="list-group-item" ng-click="c.selectItem($index)" ng-repeat="note in data.notes | filter: noteFilter">
-      <h4 class="list-group-item-heading">
-        {{note.title}}
-      </h4>
-      <p class="list-group-item-text">
+      
+      <p><Strong>Title: </Strong>{{note.title}}</p>
+      
+     
+      
+      <p class="list-group-item-text"><Strong>Note:</Strong>
+      
         {{note.note}}
       </p>
+			
+      
+      <form>
+
+				<Strong>Status: </Strong>
+        <select id="status">
+          <option>-------</option>
+        <option>Completed</option>
+        <option>Uncompleted</option>
+        
+      </select>
+       
+
+      
+        <button class="delete" >Delete</button>
+      </form>
+			
+
+  
     </a>
   </div>
+  
 </div>]]></template>
     </sp_widget>
 </record_update>
