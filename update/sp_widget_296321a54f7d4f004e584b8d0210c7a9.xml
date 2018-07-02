@@ -129,8 +129,12 @@
 		//console.log('Note ID: ' + id);
 		console.log('Note pos is: \n');
 		console.log(c.notePos);
+		console.log(c.data.notes[idx]);
+		console.log("at list client ready to edit and cur status is\n");
+		console.log(c.data.notes[idx].status);
 		$rootScope.noteID = id;
 		$rootScope.$emit('selectNote', id);
+		
 		$scope.loginOkay = false;	
 	}
 
@@ -143,6 +147,7 @@
 		c.data.notes[c.notePos].title = data.title;
 		c.data.notes[c.notePos].note = data.note;
 		c.data.notes[c.notePos].priority = data.priority;
+		c.data.notes[c.notePos].status = data.status;
 		c.data.notes[c.notePos].due = data.due;
 		
 	});
@@ -340,7 +345,16 @@ $rootScope.$on('deleteNote', function(event,data) {
 			data.idCorrect = curPwd == input.logPwd;
 			
 			if (data.idCorrect) {
-
+				var gdt = new GlideDateTime();
+		console.log('at first, at login list, the time is:\n');
+		//console.log(gdt.getDate());
+		//console.log(gdt.getTime());
+		
+		
+				checkID.last_log_in = gdt.getDisplayValue();
+				console.log(checkID.last_log_in);
+				checkID.update();
+				
 				data.notes = [];
 				var own = new GlideRecord('x_snc_createnotes_own');
 			
@@ -353,7 +367,7 @@ $rootScope.$on('deleteNote', function(event,data) {
 
 					var note = new GlideRecord('x_snc_createnotes_note');
 					note.get(own.getValue('noteid'));
-					$sp.getRecordDisplayValues(noteObj, note, 'number,title,note, due, priority,sys_id');
+					$sp.getRecordDisplayValues(noteObj, note, 'number,title,note, due, status, priority,sys_id');
 
 					//noteObj.note = noteGR.getValue('note');
 
@@ -411,14 +425,14 @@ $rootScope.$on('deleteNote', function(event,data) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-10-14 01:08:53</sys_created_on>
         <sys_id>296321a54f7d4f004e584b8d0210c7a9</sys_id>
-        <sys_mod_count>239</sys_mod_count>
+        <sys_mod_count>249</sys_mod_count>
         <sys_name>Notes List</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_296321a54f7d4f004e584b8d0210c7a9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-02 18:39:13</sys_updated_on>
+        <sys_updated_on>2018-07-02 21:13:07</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default" ng-show="loginOkay">
 
   <button type="button" class="btn btn-primary" ng-click="c.logout()" >Logout</button>
@@ -484,7 +498,8 @@ $rootScope.$on('deleteNote', function(event,data) {
 
       <p class="list-group-item-text"><Strong>Title: </Strong>
 
-        {{note.title}}</p>
+        {{note.title}}
+    </p>
 
 
 
@@ -501,26 +516,23 @@ $rootScope.$on('deleteNote', function(event,data) {
         {{note.due}}
       </p>
 
+    <p class="list-group-item-text"><Strong>Status:</Strong>
+
+        {{note.status}}
+      </p>
 
 
 
       <form>
 
-        <Strong>Status: </Strong>
-        <select id="status">
-          <option>-------</option>
-          <option>Doing</option>
-          <option>Completed</option>
-          <option>Uncompleted</option>
-
-        </select>
+        
+       	
 
 			 <button ng-click="c.selectItem($index)">Edit</button>
 				
-     <!-- <button ng-click="c.confirmDelete($index)">Delete</button>
--->      
+     <button ng-click="c.confirmDelete($index)">Delete</button>    
         
-        <button ng-click="c.deleteNote($index)">Delete</button>
+      <!--  <button ng-click="c.deleteNote($index)">Delete</button> -->
 </form>
 
 <hr>

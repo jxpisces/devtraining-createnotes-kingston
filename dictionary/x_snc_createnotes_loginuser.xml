@@ -2,6 +2,7 @@
 <database>
     <element label="LoginUser" max_length="40" name="x_snc_createnotes_loginuser" type="collection">
         <element label="Email" max_length="40" name="email" type="string"/>
+        <element label="Last log in" max_length="40" name="last_log_in" type="string"/>
         <element label="Password" max_length="40" name="password" type="string"/>
     </element>
 </database>

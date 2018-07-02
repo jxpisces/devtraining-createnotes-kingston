@@ -57,7 +57,8 @@
 			noteTitle : c.data.title,
 			noteContents : c.data.note,
 			notePQ : c.data.pq,
-			noteDue : c.data.due
+			noteDue : c.data.due,
+			noteStatus: c.data.status
 		}).then(function(r){
 			/*c.data.title = r.data.note.title;
 			c.data.note = r.data.note.note;
@@ -186,13 +187,14 @@
 					note.priority = input.notePQ;
 					note.due = input.noteDue;
 					note.email = input.noteEmail;
+					note.status = input.noteStatus;
 				
 					var id = note.insert();
 				
 				//note.get(id);
 				//data.newNote = note;
 				data.newNote = {};
-				$sp.getRecordValues(data.newNote, note, "title, note, priority, due, sys_id");
+				$sp.getRecordValues(data.newNote, note, "title, note, status, priority, due, sys_id");
 				
 				
 				console.log("server: after creating a new note: \n");
@@ -200,9 +202,9 @@
 				/*console.log(note.title);
 				console.log(note.note);
 				console.log(note.priority);
-				
-				*/
 				console.log(note.due);
+				*/
+				console.log(note.status);
 				
 			 console.log(id);
 					//$rootScope.noteID = id;
@@ -259,14 +261,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-10-14 01:17:32</sys_created_on>
         <sys_id>d06529694f7d4f004e584b8d0210c7b7</sys_id>
-        <sys_mod_count>152</sys_mod_count>
+        <sys_mod_count>156</sys_mod_count>
         <sys_name>Notes Body</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_d06529694f7d4f004e584b8d0210c7b7</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-02 10:32:09</sys_updated_on>
+        <sys_updated_on>2018-07-02 20:55:07</sys_updated_on>
         <template><![CDATA[<!--  <div ng-show="c.data.noteID"> -->
 
 
@@ -323,8 +325,20 @@
 
     <div class="form-group">
       Type due 
-      <input type="datetime-local" ng-model = 'c.data.due' name="duetime"  size="23" placeholder="yyyy-MM-dd HH:mm">
+      <input type="date" ng-model = 'c.data.due' name="duetime"  size="23" placeholder="yyyy-MM-dd HH:mm">
     </div>
+    
+     <div class="form-group">
+  	Status: 
+        <select id="status" ng-model='c.data.status' ng-change="c.updateNote('status')">
+          
+          <option selected>Doing</option>
+          <option>Completed</option>
+          <option>Uncompleted</option>
+
+        </select>
+  </div>
+
 
 <div class="form-group">
 	<button type="button" class="btn btn-success" ng-click="c.createNote()">Create New Note</button>
