@@ -2,7 +2,7 @@
 <record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category/>
-        <client_script><![CDATA[function($rootScope,$scope,spUtil) {
+        <client_script><![CDATA[function($rootScope,$scope,spUtil, spModal) {
 	/* widget controller */
 	var c = this;
 	
@@ -68,38 +68,27 @@
 				$scope.loginOkay = true;
 	});
 	
+	//$rootScope.$emit('afterEdit', true); 
+	$rootScope.$on('afterEdit', function(event, data) {
+		$scope.loginOkay = true;
+	});
+	
+	
+	
 	c.logout = function() {
 		$scope.loginOkay = false;
 		$rootScope.$emit('logoutNote', !$scope.loginOkay);
 	}
 	
 	
-	// Use a position indicator to know which record to update
-	c.notePos = 0;
-	c.selectItem = function(idx) {  
-		// Set the position indicator to the index value passed in on select
-		c.notePos = idx;
-		var id = c.data.notes[idx].sys_id;
-		console.log('Note ID: \n');
-		console.log(id);
-		$rootScope.noteID = id;
-		//$rootScope.$emit('selectNote', id);
-		//$scope.loginOkay = false;
-	}
-	// Subscribe to event.  Set the new title and note values on the 
-	// c.data object
-	/*
-	$rootScope.$on('updateTitle', function(event,data) { 
-		c.data.notes[c.notePos].title = data.title;
-		c.data.notes[c.notePos].note = data.note;
-	});
-*/
+	/*****create new note***/
 	c.newNote = function() {
 		console.log("at note list, ready to create new note:\n");
 		console.log(c.email);
-		$scope.loginOkay = false;
+		
 		
 		$rootScope.$emit('createNote', c.email);
+		$scope.loginOkay = false;
 		/*
 		c.server.get({
 			action: 'newNote'
@@ -114,16 +103,92 @@
 		*/
 	}
 	
+	
 //$rootScope.$emit('updateNewNote', r.data.newNote); 
 	$rootScope.$on('updateNewNote', function(event,data) {
+		console.log("at note list client: here we should display new note:\n");
+	
 		c.data.notes.unshift(data);
+		
 	});
 	
-	/*
-	$rootScope.$on('deleteNote', function(event,data) {
-		c.data.notes.splice($scope.notePos, 1);
+/****end creating new note*******/
+	
+	
+	
+	/*********************************/
+	/***add for edit widget*****/
+// Use a position indicator to know which record to update
+	c.notePos = 0;
+
+	c.selectItem = function(idx) {  
+		// Set the position indicator to the index value passed in on select
+		c.notePos = idx;
+		var id = c.data.notes[idx].sys_id;
+		//console.log('Note ID: ' + id);
+		console.log('Note pos is: \n');
+		console.log(c.notePos);
+		$rootScope.noteID = id;
+		$rootScope.$emit('selectNote', id);
+		$scope.loginOkay = false;	
+	}
+
+	// Subscribe to event.  Set the new title and note values on the 
+	// c.data object
+	$rootScope.$on('updateTitle', function(event,data) { 
+		console.log("at note list update title: do update: and c.date.notes is: \n");
+		console.log(c.data.notes);
+		
+		c.data.notes[c.notePos].title = data.title;
+		c.data.notes[c.notePos].note = data.note;
+		c.data.notes[c.notePos].priority = data.priority;
+		c.data.notes[c.notePos].due = data.due;
+		
 	});
-*/
+
+	/*
+$rootScope.$on('deleteNote', function(event,data) {
+	console.log("at note list: before do delete: and c.date.notes is: \n");
+	console.log(c.data.notes);
+	$scope.loginOkay = true;
+	console.log("at note list: do delete: and the pos of to-be-deleted item is: \n");
+	console.log(c.notePos);
+	c.data.notes.splice($scope.notePos, 1);
+		console.log("at note list: after do delete: and c.date.notes is: \n");
+	console.log(c.data.notes);
+	});
+	*/
+/***end add************/
+	
+	/*********************************/
+	c.confirmDelete = function(idx){
+		spModal.confirm("Are you sure you want to delete this Note record?").then(function(confirmed){
+			if(confirmed){
+				c.deleteNote(idx);
+			}
+		});
+	}
+
+	c.deleteNote = function(idx) {
+		console.log("at note list client -- deletenote--and item pos is: \n");
+		console.log(idx);
+		c.server.get({
+			action: 'deleteNote',
+			noteID: c.data.notes[idx].sys_id,
+			noteTitle : c.data.notes[idx].title
+		}).then(function(r) {
+			spUtil.addTrivialMessage("The " + r.data.title + " record has been deleted.");
+				console.log("at note list client: Delete item succeeds\n");
+				console.log("at note list: after do delete: and c.date.notes is: \n");
+				console.log(c.data.notes);
+			//$rootScope.$emit('deleteNote', c.data.noteID);
+			//c.data.title = '';
+			//c.data.note = '';
+			//c.data.noteID = '';
+		});
+	}
+
+	
 	
 	
 	
@@ -184,10 +249,7 @@
   font-size:20px;
   padding-top:5px;
 }
-.delete{
-	float: right;
-  color: red;
-}</css>
+</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
@@ -260,7 +322,7 @@
 
 					var note = new GlideRecord('x_snc_createnotes_note');
 					note.get(own.getValue('noteid'));
-					$sp.getRecordDisplayValues(noteObj, note, 'number,title,note, priority,sys_id');
+					$sp.getRecordDisplayValues(noteObj, note, 'number,title,note, due, priority,sys_id');
 
 					//noteObj.note = noteGR.getValue('note');
 
@@ -294,6 +356,20 @@
 			*/
 		}
 
+		if (input.noteID && input.action == 'deleteNote') {
+			var noteDel = new GlideRecord('x_snc_createnotes_note');
+			if (noteDel.get(input.noteID)) {
+				console.log("at note list server: Delete item succeeds\n");
+				data.title = input.noteTitle;
+				noteDel.deleteRecord();
+			}
+			
+			var ownDel = new GlideRecord('x_snc_createnotes_own');
+				if (ownDel.get('noteid', input.noteID)) {
+					console.log("delete own record success\n");
+					ownDel.deleteRecord();
+				}
+		}
 	}
 }
 )();
@@ -304,14 +380,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-10-14 01:08:53</sys_created_on>
         <sys_id>296321a54f7d4f004e584b8d0210c7a9</sys_id>
-        <sys_mod_count>177</sys_mod_count>
+        <sys_mod_count>220</sys_mod_count>
         <sys_name>Notes List</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_296321a54f7d4f004e584b8d0210c7a9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-02 05:53:41</sys_updated_on>
+        <sys_updated_on>2018-07-02 10:53:32</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default" ng-show="loginOkay">
 
   <button type="button" class="btn btn-primary" ng-click="c.logout()" >Logout</button>
@@ -331,14 +407,10 @@
   </div>
 
 
-
-
-
-  <div class="list-group">
-    <a class="list-group-item" ng-click="c.selectItem($index)" ng-repeat="note in data.notes | filter: noteFilter">
-
-
-      <p class="list-group-item-text"><Strong>Title: </Strong>
+<!--
+  <ul>
+  <li ng-click="c.selectItem($index)" ng-repeat="note in data.notes | filter: noteFilter">
+     <p class="list-group-item-text"><Strong>Title: </Strong>
 
         {{note.title}}</p>
 
@@ -369,12 +441,58 @@
 
 
 
-        <button class="delete" >Delete</button>
+      
+      </form>
+  </li>
+</ul>
+  -->
+
+
+  <div class="list-group" ng-repeat="note in data.notes | filter: noteFilter">
+   
+
+      <p class="list-group-item-text"><Strong>Title: </Strong>
+
+        {{note.title}}</p>
+
+
+
+      <p class="list-group-item-text"><Strong>Note:</Strong>
+
+        {{note.note}}
+      </p>
+
+      <p class="list-group-item-text">
+        <Strong>Priority: </Strong>
+        {{note.priority}}
+        
+        <Strong>Due: </Strong>
+        {{note.due}}
+      </p>
+
+
+
+
+      <form>
+
+        <Strong>Status: </Strong>
+        <select id="status">
+          <option>-------</option>
+          <option>Doing</option>
+          <option>Completed</option>
+          <option>Uncompleted</option>
+
+        </select>
+
+			 <button ng-click="c.selectItem($index)">Edit</button>
+				
+      <!--<button ng-click="c.confirmDelete($index)">Delete</button>-->
       </form>
 
+<hr>
 
 
-    </a>
+    
   </div>
 
 </div>]]></template>

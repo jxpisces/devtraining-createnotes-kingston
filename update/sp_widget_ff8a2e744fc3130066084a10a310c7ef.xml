@@ -39,6 +39,9 @@
 	});
 	
 	c.register = function() {
+		c.data.regEmail = '';
+		c.data.regPwd = '';
+		c.data.regPwdAgain = '';
 		$scope.loginOkay = false;
 		$scope.registerOkay = true;
 	}
@@ -155,14 +158,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-06-29 21:53:59</sys_created_on>
         <sys_id>ff8a2e744fc3130066084a10a310c7ef</sys_id>
-        <sys_mod_count>78</sys_mod_count>
+        <sys_mod_count>80</sys_mod_count>
         <sys_name>Notes Login</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_ff8a2e744fc3130066084a10a310c7ef</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-01 21:46:54</sys_updated_on>
+        <sys_updated_on>2018-07-02 07:25:19</sys_updated_on>
         <template><![CDATA[<div class="login" ng-show="loginOkay">
 <!-- your widget template -->
   <form>
