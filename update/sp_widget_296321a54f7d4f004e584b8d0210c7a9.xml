@@ -107,8 +107,9 @@
 //$rootScope.$emit('updateNewNote', r.data.newNote); 
 	$rootScope.$on('updateNewNote', function(event,data) {
 		console.log("at note list client: here we should display new note:\n");
-	
+		
 		c.data.notes.unshift(data);
+		console.log(c.data.notes);
 		
 	});
 	
@@ -218,10 +219,14 @@ $rootScope.$on('deleteNote', function(event,data) {
 
 		c.server.get({
 			action: 'snDeleteNote',
-			noteID: sysID
-
+			noteID: sysID,
+			logInEmail:c.email
 		}).then(function(r){
-			c.data.notes = r.data.notes;
+			c.data.notes = r.data.notes2;
+			console.log("at snNoteDelete\n");
+			console.log(c.data.notes);
+			console.log(r.data.notes2);
+			
 		});
 
 	}
@@ -289,6 +294,30 @@ $rootScope.$on('deleteNote', function(event,data) {
 			if(delNote.get(input.noteID)){
 				delNote.deleteRecord();
 			}
+			//data.notes = [];
+			data.notes2 = [];
+				var own2 = new GlideRecord('x_snc_createnotes_own');
+			
+				own2.addQuery('email', input.logInEmail);
+				//noteGR.orderByDesc('sys_created_on');
+				//noteGR.setLimit(options.maximum_records_to_display);
+				own2.query();
+			console.log("at server snDeleteNote\n");
+			//console.log(own2.next());
+			
+				while (own2.next()) {
+					var noteObj2 = {};
+
+					var note2 = new GlideRecord('x_snc_createnotes_note');
+					note2.get(own2.getValue('noteid'));
+					
+					console.log(note2);
+					$sp.getRecordDisplayValues(noteObj2, note2, 'number,title,note, due, priority,sys_id');
+
+					//noteObj.note = noteGR.getValue('note');
+
+					data.notes2.push(noteObj2);
+				}
 		}
 		
 		if (input.action == 'checkID') {
@@ -370,6 +399,8 @@ $rootScope.$on('deleteNote', function(event,data) {
 					ownDel.deleteRecord();
 				}
 		}
+	
+		
 	}
 }
 )();
@@ -380,14 +411,14 @@ $rootScope.$on('deleteNote', function(event,data) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-10-14 01:08:53</sys_created_on>
         <sys_id>296321a54f7d4f004e584b8d0210c7a9</sys_id>
-        <sys_mod_count>223</sys_mod_count>
+        <sys_mod_count>239</sys_mod_count>
         <sys_name>Notes List</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_296321a54f7d4f004e584b8d0210c7a9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-02 11:19:01</sys_updated_on>
+        <sys_updated_on>2018-07-02 18:39:13</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default" ng-show="loginOkay">
 
   <button type="button" class="btn btn-primary" ng-click="c.logout()" >Logout</button>
@@ -486,8 +517,10 @@ $rootScope.$on('deleteNote', function(event,data) {
 
 			 <button ng-click="c.selectItem($index)">Edit</button>
 				
-     <!--<button ng-click="c.confirmDelete($index)">Delete</button>
+     <!-- <button ng-click="c.confirmDelete($index)">Delete</button>
 -->      
+        
+        <button ng-click="c.deleteNote($index)">Delete</button>
 </form>
 
 <hr>
