@@ -2,6 +2,7 @@
 <database>
     <element label="Note" max_length="40" name="x_snc_createnotes_note" type="collection">
         <element label="Due" max_length="40" name="due" type="glide_date_time"/>
+        <element label="Email" max_length="40" name="email" type="string"/>
         <element default="Enter notes here" label="Note" max_length="4000" name="note" type="string"/>
         <element default="javascript:getNextObjNumberPadded();" display="true" dynamic_default_value="fdcb83a85f220100a9ad2572f2b4773c" label="Number" max_length="40" name="number" type="string" use_dynamic_default="true"/>
         <element choice="1" label="Priority" max_length="40" name="priority" type="choice">
