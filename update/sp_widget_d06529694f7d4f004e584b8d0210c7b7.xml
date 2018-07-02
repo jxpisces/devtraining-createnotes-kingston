@@ -5,18 +5,113 @@
         <client_script><![CDATA[function($scope,$rootScope,spModal,spUtil) {
 	/* widget controller */
 	var c = this;
-
+	$scope.noteDetail = true;
+	c.data.title = '';
+	c.data.note = '';
+	c.data.pq ='';
+	c.data.due = '';
+	/*
 	$rootScope.$on('selectNote', function(event,data) {
+
+
 		c.server.get({
-			action: 'getNote',
-			noteID: $rootScope.noteID
+			action : 'getNote',
+			noteID : $rootScope.noteID
+
 		}).then(function(r) {
 			c.data.title = r.data.note.title;
 			c.data.note = r.data.note.note;
 			c.data.noteID = r.data.note.sys_id;
+
+			$scope.noteDetail = true;
 		});
+
+
+
+	});
+	*/
+	c.email = '';
+
+
+	//$rootScope.$emit('createNote', c.email);
+	$rootScope.$on('createNote', function(event, data) {
+		$scope.noteDetail = true;
+		console.log('at note body, receive email from note list\n');
+		console.log(data);
+		c.email = data;
+		console.log('at note body, c.email is: \n');
+		console.log(c.email);
+		c.data.title = '';
+		c.data.note = '';
+		c.data.pq ='';
+		c.data.due = '';
 	});
 
+	c.createNote = function() {
+		console.log("client: now at create note listener");
+
+
+		c.server.get({
+			action: 'createNote',
+			noteEmail : c.email,
+			noteTitle : c.data.title,
+			noteContents : c.data.note,
+			notePQ : c.data.pq,
+			noteDue : c.data.due
+		}).then(function(r){
+			/*c.data.title = r.data.note.title;
+			c.data.note = r.data.note.note;
+			c.data.noteID = r.data.note.sys_id;
+			*/
+			c.data.noteID = r.data.noteID;
+			$rootScope.noteID = r.data.noteID;
+			console.log("client: after creating a new note: \n");
+			console.log(c.data.noteID);
+			$scope.noteDetail = true;
+			spUtil.addInfoMessage("New Note creation succeeds!!!");
+			console.log("new note is: \n ");
+			console.log(r.data.newNote);
+			$rootScope.$emit('updateNewNote', r.data.newNote); 
+		});
+
+
+
+
+	}
+
+
+	/*
+	$rootScope.$on('createNote', function(event,data) {
+
+
+
+		c.server.get({
+			action : 'populateNote',
+			noteID : $rootScope.noteID,
+			noteTitle : c.data.title,
+			noteContents : c.data.note,
+			notePQ : c.data.pq,
+			noteDue : c.data.due
+		}).then(function(r) {
+			c.data.title = r.data.note.title;
+			c.data.note = r.data.note.note;
+			c.data.noteID = r.data.note.sys_id;
+
+			$scope.noteDetail = true;
+		});
+
+
+
+	});
+
+	*/
+
+	c.backToList = function() {
+		$scope.noteDetail = false;
+		$rootScope.$emit('backToList', !$scope.noteDetail); 
+	}
+
+	/*
 	c.updateNote = function(updateType) {
 		c.server.get({
 			action: 'updateNote',
@@ -43,13 +138,16 @@
 		});
 	}
 
+
 	c.confirmDelete = function(){
 		spModal.confirm("Are you sure you want to delete this Note record?").then(function(confirmed){
 			if(confirmed){
 				c.deleteNote();
+				c.backToList();
 			}
 		});
 	}
+	*/
 
 }
 
@@ -73,28 +171,87 @@
         <roles/>
         <script><![CDATA[(function() {
 
-	if (input && input.noteID) {
+	if (input) {
 		var note = new GlideRecord('x_snc_createnotes_note');
-		if (note.get(input.noteID)) {
-			if (input.action == 'getNote') {
-				data.note = {};
-				$sp.getRecordValues(data.note, note, "title, note, sys_id");
-			}
-			else if (input.action == 'updateNote') { 
-				note.title = input.noteTitle; 
-				note.note = input.noteBody; 
-				note.update(); 
-				// Need to update the data object with the new title
-				// and first 20 characters of the note (do not want to write huge
-				// strings to the Notes List widget)
-				data.title = note.getValue('title');
-				data.note = note.getValue('note').slice(0,20);
-			}
+		var own = new GlideRecord('x_snc_createnotes_own');
+		if (!input.noteID) {
+			if (input.action == 'createNote') {
+					console.log("server: now at create note listener");
+				
+				//create new "note".
+					note.initialize();
+				
+					note.title = input.noteTitle;
+					note.note = input.noteContents;
+					note.priority = input.notePQ;
+					note.due = input.noteDue;
+					
+				
+					var id = note.insert();
+				
+				//note.get(id);
+				//data.newNote = note;
+				data.newNote = {};
+				$sp.getRecordValues(data.newNote, note, "title, note, priority, due, sys_id");
+				
+				
+				console.log("server: after creating a new note: \n");
+				
+				/*console.log(note.title);
+				console.log(note.note);
+				console.log(note.priority);
+				
+				*/
+				console.log(note.due);
+				
+			 console.log(id);
+					//$rootScope.noteID = id;
+					data.noteID = id;
+					//create new "email-to-new note" relationship.
+				own.initialize();
+				own.email = input.noteEmail;
+				own.noteid = id;
+				console.log("server: after creating a new email-to-new note relationship \n");
+			 console.log(own.email);
+				console.log(own.noteid);
+				own.insert();
+				}
+			/*if (input.action == 'newNote') {
+			var newNote = new GlideRecord('x_snc_createnotes_note');
+			newNote.newRecord();
+			var id = newNote.insert();
+			data.noteID = id;
+			data.newNote = {};
+			$sp.getRecordValues(data.newNote,newNote,"title,note,sys_id");
+		}
+		*/
+		} 
+		/*else {
+			if (note.get(input.noteID)) {
+				if (input.action == 'getNote') {
 
-			else if (input.action == 'deleteNote') { 
-				note.deleteRecord(); 
+					data.note = {};
+					$sp.getRecordValues(data.note, note, "title, note, sys_id");
+				}
+
+
+				else if (input.action == 'updateNote') { 
+					note.title = input.noteTitle; 
+					note.note = input.noteBody; 
+					note.update(); 
+					// Need to update the data object with the new title
+					// and first 20 characters of the note (do not want to write huge
+					// strings to the Notes List widget)
+					data.title = note.getValue('title');
+					data.note = note.getValue('note').slice(0,20);
+				}
+
+				else if (input.action == 'deleteNote') { 
+					note.deleteRecord(); 
+				}
 			}
 		}
+		*/
 	}
 })();]]></script>
         <servicenow>false</servicenow>
@@ -102,67 +259,96 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-10-14 01:17:32</sys_created_on>
         <sys_id>d06529694f7d4f004e584b8d0210c7b7</sys_id>
-        <sys_mod_count>51</sys_mod_count>
+        <sys_mod_count>149</sys_mod_count>
         <sys_name>Notes Body</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_d06529694f7d4f004e584b8d0210c7b7</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-01 23:14:47</sys_updated_on>
+        <sys_updated_on>2018-07-02 06:10:08</sys_updated_on>
         <template><![CDATA[<!--  <div ng-show="c.data.noteID"> -->
 
-<div ng-show=true>
-  <delete-button-confirm></delete-button-confirm>
-  <br><br>
-<form>
-  
-  	
-     <div class="form-group">
-        <input placeholder="Enter title here" class="form-control" id="note-title" ng-model="c.data.title" ng-change="c.updateNote('title')" ng-model-options="{debounce: 1000}"/>
+
+
+<div ng-show="noteDetail">
+
+
+
+  <div class="container">
+
+
+    <div class="btn-group btn-group-justified">
+
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary" ng-click="c.backToList()">
+
+          <span class="glyphicon glyphicon-chevron-left">
+          </span>
+
+        </button>
       </div>
+
       
-       <div class="form-group">
-    <textarea placeholder="Enter notes here" class="form-control" id="note-body" ng-model="c.data.note" ng-change="c.updateNote('body')" ng-model-options="{debounce: 1000}" ></textarea>
+
+
+    </div>
+
+
+
   </div>
-      
-        <div class="form-group">
-          Select priority 
-          <select name="priority" ng-model = 'c.data.pq'>
-            <option value="critical">Critical</option>
-            <option value="high">High</option>
-            <option value="moderate">Moderate</option>
-            <option value="low">Low</option>
-          </select>   
-        </div>
-        
-        <div class="form-group">
-          Type due 
-  				<input type="datetime-local" name="duetime">
-        </div>
-        
-      
-  
-  
+  <hr>
+
+
+  <form>
+
+
+    <div class="form-group">
+      Title: <input placeholder="Enter title here" class="form-control" id="note-title" ng-model="c.data.title"  ng-model-options="{debounce: 1000}"/>
+    </div>
+
+    <div class="form-group">
+      Note: <textarea placeholder="Enter notes here" class="form-control" id="note-body" ng-model="c.data.note"  ng-model-options="{debounce: 1000}" ></textarea>
+    </div>
+
+    <div class="form-group">
+      Select priority 
+      <select name="priority" ng-model = 'c.data.pq'>
+        <option value="critical">Critical</option>
+        <option value="high">High</option>
+        <option value="moderate">Moderate</option>
+        <option value="low">Low</option>
+      </select>   
+    </div>
+
+    <div class="form-group">
+      Type due 
+      <input type="text" ng-model = 'c.data.due' name="duetime"  size="23" placeholder="yyyy-MM-dd HH:mm">
+    </div>
+
+<div class="form-group">
+	<button type="button" class="btn btn-success" ng-click="c.createNote()">Create New Note</button>
+</div>
+
   </form>
-  
-  
-		</div>
+
+
+</div>
 
 
 <!--
 <div class="panel panel-default" ng-show="c.data.noteID">
-  <div class="panel-heading clearfix">
-    <div class="row">
-      <div class="col-md-11">
-        <input class="form-control" id="note-title" ng-model="c.data.title" ng-change="c.updateNote('title')" ng-model-options="{debounce: 1000}"/>
-      </div>
+<div class="panel-heading clearfix">
+<div class="row">
+<div class="col-md-11">
+<input class="form-control" id="note-title" ng-model="c.data.title" ng-change="c.updateNote('title')" ng-model-options="{debounce: 1000}"/>
+</div>
 <delete-button-confirm></delete-button-confirm>
-    </div>
-  </div>
-  <div class="panel-body">
-    <textarea class="form-control" id="note-body" ng-model="c.data.note" ng-change="c.updateNote('body')" ng-model-options="{debounce: 1000}" ></textarea>
-  </div>
+</div>
+</div>
+<div class="panel-body">
+<textarea class="form-control" id="note-body" ng-model="c.data.note" ng-change="c.updateNote('body')" ng-model-options="{debounce: 1000}" ></textarea>
+</div>
 </div>
 -->]]></template>
     </sp_widget>

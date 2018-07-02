@@ -7,7 +7,7 @@
 	var c = this;
 	
 	//$rootScope.loginFlag = true;
-	$scope.loginOkay = true;
+	$scope.loginOkay = false;
 	
 	// Listen to event from the "NoteLogin" widget.
 	//$rootScope.$emit('loginNote', $scope.userEmail, $scope.userPwd);
@@ -17,7 +17,7 @@
 	
 	c.email = '';
 	c.pwd = '';
-	
+
 	
 	$rootScope.$on('loginNote', function(event,data) { 
 		
@@ -47,10 +47,25 @@
 			console.log(r.data.idCorrect);
 			$scope.loginOkay = r.data.idCorrect;
 			$rootScope.$emit('acLogin', r.data.idCorrect);
+			if ($scope.loginOkay) {
+				c.data.notes = r.data.notes;
+			}
+			
 		});
 		
 		
 		
+	});
+	
+	
+	
+	
+		$rootScope.$on('backToPQ', function(event,data) { 
+				$scope.loginOkay = true;
+	});
+	
+	$rootScope.$on('backToList', function(event,data) { 
+				$scope.loginOkay = true;
 	});
 	
 	c.logout = function() {
@@ -65,32 +80,55 @@
 		// Set the position indicator to the index value passed in on select
 		c.notePos = idx;
 		var id = c.data.notes[idx].sys_id;
-		console.log('Note ID: ' + id);
+		console.log('Note ID: \n');
+		console.log(id);
 		$rootScope.noteID = id;
-		$rootScope.$emit('selectNote', id);
+		//$rootScope.$emit('selectNote', id);
+		//$scope.loginOkay = false;
 	}
 	// Subscribe to event.  Set the new title and note values on the 
 	// c.data object
+	/*
 	$rootScope.$on('updateTitle', function(event,data) { 
 		c.data.notes[c.notePos].title = data.title;
 		c.data.notes[c.notePos].note = data.note;
 	});
-
+*/
 	c.newNote = function() {
+		console.log("at note list, ready to create new note:\n");
+		console.log(c.email);
+		$scope.loginOkay = false;
+		
+		$rootScope.$emit('createNote', c.email);
+		/*
 		c.server.get({
 			action: 'newNote'
 		}).then(function(r) {
 			c.data.notes.unshift(r.data.newNote);
 			c.data.noteID = r.data.noteID;
 			$rootScope.noteID = c.data.noteID;
-			$rootScope.$emit('selectNote', c.data.noteID);
+			
+			//$rootScope.$emit('createNote', c.data.noteID);
+			
 		});
+		*/
 	}
-
+	
+//$rootScope.$emit('updateNewNote', r.data.newNote); 
+	$rootScope.$on('updateNewNote', function(event,data) {
+		c.data.notes.unshift(data);
+	});
+	
+	/*
 	$rootScope.$on('deleteNote', function(event,data) {
 		c.data.notes.splice($scope.notePos, 1);
 	});
-
+*/
+	
+	
+	
+	
+	
 	// Record removed from data object on the client and passed to server
 	c.snNoteUpdate = function(name,sysID){
 
@@ -164,24 +202,12 @@
         <public>false</public>
         <roles/>
         <script><![CDATA[(function() {
-
-	data.notes = [];
-	var noteGR = new GlideRecord('x_snc_createnotes_note');
-	noteGR.addQuery('user', gs.getUser().getID());
-	noteGR.orderByDesc('sys_created_on');
-	noteGR.setLimit(options.maximum_records_to_display);
-	noteGR.query();
-	while (noteGR.next()) {
-		var noteObj = {};
-
-		$sp.getRecordDisplayValues(noteObj, noteGR, 'number,title,sys_id');
-
-		noteObj.note = noteGR.getValue('note').slice(0,20);
-
-		data.notes.push(noteObj);
-	}
-
+	
+	
+	
+	
 	if (input) {
+		/*
 		if (input.action == 'newNote') {
 			var newNote = new GlideRecord('x_snc_createnotes_note');
 			newNote.newRecord();
@@ -190,6 +216,7 @@
 			data.newNote = {};
 			$sp.getRecordValues(data.newNote,newNote,"title,note,sys_id");
 		}
+		*/
 
 		if (input.action == 'snDeleteNote') {
 			var delNote = new GlideRecord('x_snc_createnotes_note');
@@ -218,6 +245,32 @@
 				console.log('\n');
 				*/
 			data.idCorrect = curPwd == input.logPwd;
+			
+			if (data.idCorrect) {
+
+				data.notes = [];
+				var own = new GlideRecord('x_snc_createnotes_own');
+			
+				own.addQuery('email', input.logInEmail);
+				//noteGR.orderByDesc('sys_created_on');
+				//noteGR.setLimit(options.maximum_records_to_display);
+				own.query();
+				while (own.next()) {
+					var noteObj = {};
+
+					var note = new GlideRecord('x_snc_createnotes_note');
+					note.get(own.getValue('noteid'));
+					$sp.getRecordDisplayValues(noteObj, note, 'number,title,note, priority,sys_id');
+
+					//noteObj.note = noteGR.getValue('note');
+
+					data.notes.push(noteObj);
+				}
+
+
+			}
+
+			
 			/*if (data.idCorrect) {
 				//Populates "Last Login" field for the current user.
 				var gdt = new GlideDateTime();
@@ -251,14 +304,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-10-14 01:08:53</sys_created_on>
         <sys_id>296321a54f7d4f004e584b8d0210c7a9</sys_id>
-        <sys_mod_count>136</sys_mod_count>
+        <sys_mod_count>177</sys_mod_count>
         <sys_name>Notes List</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_296321a54f7d4f004e584b8d0210c7a9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-01 23:41:00</sys_updated_on>
+        <sys_updated_on>2018-07-02 05:53:41</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default" ng-show="loginOkay">
 
   <button type="button" class="btn btn-primary" ng-click="c.logout()" >Logout</button>
@@ -277,43 +330,53 @@
     <input placeholder="Filter" class="form-control" ng-model="noteFilter" /> 
   </div>
 
-  
-  
-  
-  
+
+
+
+
   <div class="list-group">
     <a class="list-group-item" ng-click="c.selectItem($index)" ng-repeat="note in data.notes | filter: noteFilter">
-      
-      <p><Strong>Title: </Strong>{{note.title}}</p>
-      
-     
-      
+
+
+      <p class="list-group-item-text"><Strong>Title: </Strong>
+
+        {{note.title}}</p>
+
+
+
       <p class="list-group-item-text"><Strong>Note:</Strong>
-      
+
         {{note.note}}
       </p>
-			
-      
+
+      <p class="list-group-item-text"><Strong>Priority: </Strong>
+
+        {{note.priority}}
+      </p>
+
+
+
+
       <form>
 
-				<Strong>Status: </Strong>
+        <Strong>Status: </Strong>
         <select id="status">
           <option>-------</option>
-        <option>Completed</option>
-        <option>Uncompleted</option>
-        
-      </select>
-       
+          <option>Completed</option>
+          <option>Uncompleted</option>
 
-      
+        </select>
+
+
+
         <button class="delete" >Delete</button>
       </form>
-			
 
-  
+
+
     </a>
   </div>
-  
+
 </div>]]></template>
     </sp_widget>
 </record_update>
