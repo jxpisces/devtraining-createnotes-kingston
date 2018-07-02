@@ -172,6 +172,7 @@ $rootScope.$on('deleteNote', function(event,data) {
 	c.deleteNote = function(idx) {
 		console.log("at note list client -- deletenote--and item pos is: \n");
 		console.log(idx);
+		
 		c.server.get({
 			action: 'deleteNote',
 			noteID: c.data.notes[idx].sys_id,
@@ -181,6 +182,7 @@ $rootScope.$on('deleteNote', function(event,data) {
 				console.log("at note list client: Delete item succeeds\n");
 				console.log("at note list: after do delete: and c.date.notes is: \n");
 				console.log(c.data.notes);
+			
 			//$rootScope.$emit('deleteNote', c.data.noteID);
 			//c.data.title = '';
 			//c.data.note = '';
@@ -328,8 +330,6 @@ $rootScope.$on('deleteNote', function(event,data) {
 
 					data.notes.push(noteObj);
 				}
-
-
 			}
 
 			
@@ -380,14 +380,14 @@ $rootScope.$on('deleteNote', function(event,data) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-10-14 01:08:53</sys_created_on>
         <sys_id>296321a54f7d4f004e584b8d0210c7a9</sys_id>
-        <sys_mod_count>220</sys_mod_count>
+        <sys_mod_count>223</sys_mod_count>
         <sys_name>Notes List</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_296321a54f7d4f004e584b8d0210c7a9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-02 10:53:32</sys_updated_on>
+        <sys_updated_on>2018-07-02 11:19:01</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default" ng-show="loginOkay">
 
   <button type="button" class="btn btn-primary" ng-click="c.logout()" >Logout</button>
@@ -486,8 +486,9 @@ $rootScope.$on('deleteNote', function(event,data) {
 
 			 <button ng-click="c.selectItem($index)">Edit</button>
 				
-      <!--<button ng-click="c.confirmDelete($index)">Delete</button>-->
-      </form>
+     <!--<button ng-click="c.confirmDelete($index)">Delete</button>
+-->      
+</form>
 
 <hr>
 
