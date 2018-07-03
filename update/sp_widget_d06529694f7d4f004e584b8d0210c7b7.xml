@@ -261,14 +261,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2017-10-14 01:17:32</sys_created_on>
         <sys_id>d06529694f7d4f004e584b8d0210c7b7</sys_id>
-        <sys_mod_count>156</sys_mod_count>
+        <sys_mod_count>157</sys_mod_count>
         <sys_name>Notes Body</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_d06529694f7d4f004e584b8d0210c7b7</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-02 20:55:07</sys_updated_on>
+        <sys_updated_on>2018-07-02 21:24:32</sys_updated_on>
         <template><![CDATA[<!--  <div ng-show="c.data.noteID"> -->
 
 
@@ -325,7 +325,7 @@
 
     <div class="form-group">
       Type due 
-      <input type="date" ng-model = 'c.data.due' name="duetime"  size="23" placeholder="yyyy-MM-dd HH:mm">
+      <input type="datetime-local" ng-model = 'c.data.due' name="duetime"  size="23" placeholder="yyyy-MM-dd HH:mm">
     </div>
     
      <div class="form-group">
